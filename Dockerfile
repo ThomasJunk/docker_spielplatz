@@ -11,5 +11,5 @@ RUN apk add --no-cache gcc musl-dev linux-headers git \
     && pip install -r requirements.txt \
     && chown -R appuser:appgroup /code
 USER appuser
-
+ENV PORT=8000
 CMD ["python", "server.py"]
