@@ -1,10 +1,15 @@
 FROM python:3.7-alpine
 
-ARG MSG="Hello"
+ARG REPOSITORY="https://github.com/ThomasJunk/docker_spielplatz"
+ARG COMMIT=master
 WORKDIR /code
-RUN apk add --no-cache gcc musl-dev linux-headers
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-RUN echo "${MSG}"
-COPY . .
+RUN apk add --no-cache gcc musl-dev linux-headers git \
+    && addgroup -S appgroup \
+    && adduser -S appuser -G appgroup \
+    && git clone --no-checkout -- $REPOSITORY . \
+    && git checkout $COMMIT \
+    && pip install -r requirements.txt \
+    && chown -R appuser:appgroup /code
+USER appuser
+
 CMD ["python", "server.py"]
